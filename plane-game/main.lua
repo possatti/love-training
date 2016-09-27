@@ -6,7 +6,7 @@ debug = false
 enemySpeed = 200
 bulletSpeed = 400
 playerSpeed = 250
-groundSpeed = 450
+groundSpeed = 600
 
 -- Player data
 startX = 200
@@ -179,8 +179,17 @@ function love.update(dt)
   end
 
   -- create more tiles if necessary
+  gambiarra = true -- corrects the sliding tile problem
   if smallestY > -groundImg:getHeight() then
     for x = 0, love.graphics.getWidth(), groundImg:getWidth() do
+      -- create an additional tile over the first one created here
+      if gambiarra then
+        newTile = {x = x, y = smallestY - groundImg:getHeight(), img = groundImg}
+        table.insert(bgTiles, newTile)
+        gambiarra = false
+      end
+
+      -- create new tile
       newTile = {x = x, y = smallestY - groundImg:getHeight(), img = groundImg}
       table.insert(bgTiles, newTile)
     end
