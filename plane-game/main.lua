@@ -2,34 +2,7 @@
 
 debug = false
 
--- Speeds
-enemySpeed = 200
-bulletSpeed = 400
-playerSpeed = 250
-groundSpeed = 600
 
--- Player data
-startX = 200
-startY = 600
-player = { x = startX, y = startY, speed = playerSpeed, img = nil }
-
--- Timers
--- We declare these here so we don't have to edit them multiple places
-canShoot = true
-canShootTimerMax = 0.2
-canShootTimer = canShootTimerMax
-createEnemyTimerMax = 0.4
-createEnemyTimer = createEnemyTimerMax
-
--- Entity Storage
-bullets = {} -- array of current bullets being drawn and updated
-enemies = {} -- array of current enemies on screen
-bgTiles = {}
-
--- math.randomseed( os.time() )
-
-isAlive = true
-score = 0
 
 -- Collision detection taken function from http://love2d.org/wiki/BoundingBox.lua
 -- Returns true if two boxes overlap, false if they don't
@@ -44,7 +17,7 @@ end
 
 function love.load(arg)
   -- Images
-  player.img = love.graphics.newImage('assets/Aircraft_03.png')
+  playerImg = love.graphics.newImage('assets/Aircraft_03.png')
   bulletImg = love.graphics.newImage('assets/bullet_2_orange.png')
   enemyImg = love.graphics.newImage('assets/Aircraft_02.png')
   groundImg = love.graphics.newImage('assets/ground.png')
@@ -61,6 +34,36 @@ function love.load(arg)
   bgMusic:setVolume(0.8)
   bgMusic:setLooping(true)
   bgMusic:play()
+
+  -- Use ramdom numbers based on system time
+  math.randomseed(os.time())
+
+  isAlive = true
+  score = 0
+
+  -- Speeds
+  enemySpeed = 200
+  bulletSpeed = 400
+  playerSpeed = 250
+  groundSpeed = 600
+
+  -- Player data
+  startX = love.graphics.getWidth()/2 - playerImg:getWidth()/2
+  startY = love.graphics.getHeight() - playerImg:getHeight()
+  player = { x = startX, y = startY, speed = playerSpeed, img = playerImg }
+
+  -- Timers
+  -- We declare these here so we don't have to edit them multiple places
+  canShoot = true
+  canShootTimerMax = 0.2
+  canShootTimer = canShootTimerMax
+  createEnemyTimerMax = 0.4
+  createEnemyTimer = createEnemyTimerMax
+
+  -- Entity Storage
+  bullets = {} -- array of current bullets being drawn and updated
+  enemies = {} -- array of current enemies on screen
+  bgTiles = {}
 
   -- Ground
   local x = 0
