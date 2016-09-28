@@ -3,17 +3,22 @@ SHELL=/bin/bash
 .ONESHELL:
 .PHONY: all clean
 
-# Other variables
-PACKAGE_NAME = 'game.love'
-SOURCE_FILES = $(wildcard *.lua) $(wildcard *.png)
+# Source files
+IMAGE_FILES = $(shell find -name "*.png")
+SOUND_FILES = $(shell find -name "*.wav") $(shell find -name "*.mp3")
+SOURCE_FILES = $(shell find -name "*.lua")
+ALL_SOURCE_FILES = $(IMAGE_FILES) $(SOUND_FILES) $(SOURCE_FILES)
+
+# Package name
+PACKAGE_NAME = game.love
 
 run: all
 	love $(PACKAGE_NAME)
 
 all: $(PACKAGE_NAME)
 
-$(PACKAGE_NAME): $(SOURCE_FILES)
-	zip -r $(PACKAGE_NAME) $(SOURCE_FILES)
+$(PACKAGE_NAME): $(ALL_SOURCE_FILES)
+	zip -r $(@) $(?)
 
 clean:
 	rm -f $(PACKAGE_NAME)
