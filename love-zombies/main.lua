@@ -19,10 +19,15 @@ end
 function love.load()
   -- Load images.
   TankImg = love.graphics.newImage('assets/tank_alpha.png')
+  TankGunImg = love.graphics.newImage('assets/tank_gun.png')
+  TankBodyImg = love.graphics.newImage('assets/tank_body.png')
+  TankWheelsImg = love.graphics.newImage('assets/tank_wheels.png')
   ZombieImg = love.graphics.newImage('assets/zombie/skeleton-idle_0.png')
   crosshairImg = love.graphics.newImage('/assets/crosshairs/triangle/triangle-06.png')
   crosshairHitImg = love.graphics.newImage('/assets/crosshairs/triangle/triangle-06-whole.png')
   grassImg = love.graphics.newImage('/assets/grass.png')
+
+  -- Quads.
   tileW, tileH = 32, 32
   tilesetW, tilesetH = grassImg:getDimensions()
   grassQuad = love.graphics.newQuad(0, 0, tileW, tileH, tilesetW, tilesetH)
@@ -64,16 +69,41 @@ function love.update(dt)
   mouse.x, mouse.y = love.mouse.getPosition()
 
   -- Hero movement.
+  facing = 'nowhere'
   if hero:isAlive() then
     if love.keyboard.isDown('up', 'w') then
       hero.y = math.max(hero.w/2, hero.y - hero.speed*dt)
+      facing = 'up'
+      hero.bodyR = 0
     elseif love.keyboard.isDown('down', 's') then
       hero.y = math.min(love.graphics.getHeight()-hero.h/2, hero.y + hero.speed*dt)
+      facing = 'down'
+      hero.bodyR = math.pi
     end
     if love.keyboard.isDown('left', 'a') then
       hero.x = math.max(hero.w/2, hero.x - hero.speed*dt)
+      if facing == 'up' then
+        facing = 'upleft'
+        hero.bodyR = math.pi + math.pi*3/4
+      elseif facing == 'down' then
+        facing = 'downleft'
+        hero.bodyR = math.pi + math.pi/4
+      else
+        facing = 'left'
+        hero.bodyR = math.pi*3/2
+      end
     elseif love.keyboard.isDown('right', 'd') then
       hero.x = math.min(love.graphics.getWidth()-hero.w/2, hero.x + hero.speed*dt)
+      if facing == 'up' then
+        facing = 'upright'
+        hero.bodyR = math.pi/4
+      elseif facing == 'down' then
+        facing = 'downright'
+        hero.bodyR = math.pi*3/4
+      else
+        facing = 'right'
+        hero.bodyR = math.pi/2
+      end
     end
 
     -- Adjust hero direction.
@@ -185,8 +215,10 @@ function love.draw()
 
   -- Draw hero.
   love.graphics.setColor(200,200,200,255)
-  w, h = TankImg:getDimensions()
-  love.graphics.draw(TankImg, hero.x, hero.y, hero.r+math.pi/2, hero.w/w, hero.h/h, TankImg:getWidth()/2, TankImg:getHeight()/2)
+  w, h = TankBodyImg:getDimensions()
+  love.graphics.draw(TankWheelsImg, hero.x, hero.y, hero.bodyR, hero.w/w, hero.h/h, w/2, h/2)
+  love.graphics.draw(TankBodyImg, hero.x, hero.y, hero.bodyR, hero.w/w, hero.h/h, w/2, h/2)
+  love.graphics.draw(TankGunImg, hero.x, hero.y, hero.r+math.pi/2, hero.w/w, hero.h/h, w/2, h/2)
   
   -- Draw Hero's HP.
   love.graphics.setColor(0,0,0,255)

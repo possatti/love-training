@@ -4,9 +4,10 @@
 hero = {
   x = love.graphics.getWidth()/2,
   y = love.graphics.getHeight()/2,
-  w = 50,
-  h = 50,
+  w = 60,
+  h = 60,
   r = math.pi/4,
+  bodyR = 0,
   hp = 0,
   hpMax = 3,
   speed = 125,
