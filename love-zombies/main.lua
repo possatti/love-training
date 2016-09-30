@@ -152,18 +152,10 @@ function love.update(dt)
   end
 
   -- Update bullets.
-  balacobaco = false
   for i, bullet in ipairs(bullets) do
     moveEntity(bullet, dt)
-    if isOffscreen(bullet) or balacobaco then
-      -- print("Bala removida")
-      balacobaco = true
-    else
-      -- print("Bala não removida")
-    end
     if (bullet.x < -10) or (bullet.x > love.graphics.getWidth() + 10)
     or (bullet.y < -10) or (bullet.y > love.graphics.getHeight() + 10) then
-      print("Bala removida")
       table.remove(bullets, i)
     end
   end
@@ -171,7 +163,7 @@ function love.update(dt)
   -- Check collision of bullets against zombies.
   for i, zombie in ipairs(zombies) do
     for j, bullet in ipairs(bullets) do
-      if checkCollisionCircles(zombie.x, zombie.y, zombie.w/2, bullet.x, bullet.y, 2) then
+      if checkCollisionCircles(zombie.x, zombie.y, zombie.w/2-5, bullet.x, bullet.y, 2) then
         hero.score = hero.score + 1
         table.remove(zombies, i)
         table.remove(bullets, j)
@@ -183,7 +175,7 @@ function love.update(dt)
 
   -- Check collision of hero against zombies.
   for i, zombie in ipairs(zombies) do
-    if checkCollisionCircles(zombie.x, zombie.y, zombie.w/2, hero.x, hero.y, hero.w/2) then
+    if checkCollisionCircles(zombie.x, zombie.y, zombie.w/2-5, hero.x, hero.y, hero.w/2-5) then
       heroHitSound:rewind()
       heroHitSound:play()
       table.remove(zombies, i)
@@ -193,6 +185,15 @@ function love.update(dt)
 end
 
 function love.draw()
+  if debug then
+    objectiveW, objectiveH = 700, 500
+    currentW, currentH = love.graphics.getWidth(), love.graphics.getHeight()
+    scaleW = objectiveW / currentW
+    scaleH = objectiveH / currentH
+    love.graphics.scale(scaleW, scaleH)
+    love.graphics.translate((currentW-objectiveW)/2, (currentH-objectiveH)/2)
+  end
+
   -- Draw the Background.
   love.graphics.setColor(200,200,200,255)
   for y = 0, love.graphics.getHeight(), tileH do
@@ -201,12 +202,6 @@ function love.draw()
     end
   end
 
-  -- Draw zombies.
-  for i, zombie in ipairs(zombies) do
-    -- love.graphics.circle("fill", zombie.x-10, zombie.y-10, 10, 10)
-    w, h = ZombieImg:getDimensions()
-    love.graphics.draw(ZombieImg, zombie.x, zombie.y, zombie.r, zombie.w/w, zombie.h/h, ZombieImg:getWidth()/2, ZombieImg:getHeight()/2)
-  end
   -- Draw bullets.
   love.graphics.setColor(120,0,0,255)
   for i, bullet in ipairs(bullets) do
@@ -219,7 +214,14 @@ function love.draw()
   love.graphics.draw(TankWheelsImg, hero.x, hero.y, hero.bodyR, hero.w/w, hero.h/h, w/2, h/2)
   love.graphics.draw(TankBodyImg, hero.x, hero.y, hero.bodyR, hero.w/w, hero.h/h, w/2, h/2)
   love.graphics.draw(TankGunImg, hero.x, hero.y, hero.r+math.pi/2, hero.w/w, hero.h/h, w/2, h/2)
-  
+
+  -- Draw zombies.
+  for i, zombie in ipairs(zombies) do
+    -- love.graphics.circle("fill", zombie.x-10, zombie.y-10, 10, 10)
+    w, h = ZombieImg:getDimensions()
+    love.graphics.draw(ZombieImg, zombie.x, zombie.y, zombie.r, zombie.w/w, zombie.h/h, ZombieImg:getWidth()/2, ZombieImg:getHeight()/2)
+  end
+
   -- Draw Hero's HP.
   love.graphics.setColor(0,0,0,255)
   local offset = 1
@@ -265,5 +267,8 @@ function love.draw()
     else
       love.graphics.print("shoot?", 10, 30)
     end
+    offset = 0
+    love.graphics.setColor(255,0,0,255)
+    love.graphics.rectangle("line", -offset, -offset, currentW+offset*2,currentH+offset*2)
   end
 end
