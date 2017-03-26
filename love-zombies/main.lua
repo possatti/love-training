@@ -47,8 +47,9 @@ function love.load()
   -- Other variables.
   zombieSpawnInterval = 0
   zombieSpawnIntervalMax = 0.5
-
-  love.mouse.setVisible(false) -- make default mouse invisible
+  -- bigFont = love.graphics.newFont(40)
+  love.mouse.setVisible(false)
+  love.mouse.setGrabbed(true)
 
   -- Start game.
   start()
@@ -240,6 +241,7 @@ function love.draw()
 
   -- Draw game over.
   if not hero:isAlive() then
+    -- love.graphics.setFont(bigFont)
     local x, y
     y = love.graphics.getHeight()/2 - 100
     x = love.graphics.getWidth()/2 - 40
